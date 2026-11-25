@@ -1,4 +1,10 @@
+"""Write the battery's last text to MAKEFUN_OUTPUT_DIR/entry.txt.
+
+Standard library only. No network, randomness, clock reads, or other files.
+"""
+
 import os
+import sys
 
 TEXT = (
     "you plugged in the lamp. THE LAMP. it runs on spite and a firmware update "
@@ -8,7 +14,11 @@ TEXT = (
 
 def main():
     out_dir = os.environ.get("MAKEFUN_OUTPUT_DIR") or "/output"
-    os.makedirs(out_dir, exist_ok=True)
+    try:
+        os.makedirs(out_dir, exist_ok=True)
+    except OSError as exc:
+        print(f"cannot create output directory {out_dir!r}: {exc}", file=sys.stderr)
+        raise SystemExit(1)
     with open(os.path.join(out_dir, "entry.txt"), "w", encoding="utf-8") as f:
         f.write(TEXT + "\n")
 
